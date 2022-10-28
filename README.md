@@ -2,8 +2,8 @@
 
 This repository shows how to create and mantain a versioned library that must be shared across multiple repositories (i.e., in client/server or microservices scenarios):
 
-- The library is published on GitHub NuGet registry.
-- Every project that uses this library needs the following NuGet.config file:
+- The library is published on GitHub NuGet registry using a GitHub Action.
+- Every project that uses this library needs the following `NuGet.config` file:
 
 ```
 <?xml version="1.0" encoding="utf-8"?>
