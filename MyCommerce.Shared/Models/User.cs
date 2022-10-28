@@ -1,4 +1,4 @@
-﻿namespace MyCommerce.Shared;
+﻿namespace MyCommerce.Shared.Models;
 
 public class User
 {
