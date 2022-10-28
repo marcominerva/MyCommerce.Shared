@@ -1,0 +1,43 @@
+name: Publish MyCommerce Assets on GitHub
+ 
+on:
+  push:
+    branches: [ master ]
+    paths: [ 'MyCommerce.Shared/**' ]
+  workflow_dispatch:
+
+env:
+  NET_VERSION: '6.x'
+  PROJECT_NAME: MyCommerce.Shared
+  PROJECT_FILE: MyCommerce.Shared.csproj  
+  
+jobs:
+  publish:
+    name: Publish on NuGet
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0 # avoid shallow clone so nbgv can do its work.
+        
+    - name: Setup .NET SDK ${{ env.NET_VERSION }}
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ env.NET_VERSION }}
+        
+    - name: Nerdbank.GitVersioning 
+      uses: dotnet/nbgv@v0.4
+      id: nbgv
+      with:        
+        path: ${{ env.PROJECT_NAME }}
+        
+    - name: Package
+      run: dotnet pack -c Release -o . '${{ env.PROJECT_NAME }}/${{ env.PROJECT_FILE }}'
+      
+    - name: Add NuGet source
+      run: dotnet nuget add source --username marcominerva --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/marcominerva/index.json"
+
+    - name: Publish on GitHub Packages
+      run: dotnet nuget push *.nupkg --source "github"  
